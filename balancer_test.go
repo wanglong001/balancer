@@ -12,7 +12,7 @@ func Test_robinBalancer(t *testing.T) {
 	for i, v := range ipList {
 		s[i] = v
 	}
-	rb := &RoundRobin{offset: 0, partitions: []interface{}(s)}
+	rb := &RoundRobinBalancer{offset: 0, partitions: []interface{}(s)}
 	for i := 0; i < 50; i++ {
 		y := rb.Balance()
 		t.Log(y)
@@ -25,7 +25,7 @@ func Test_LeastResBalancer(t *testing.T) {
 	for i, v := range ipList {
 		s[i] = v
 	}
-	lr := &LeastResourcesBalance{}
+	lr := &LeastResourcesBalancer{}
 	lr.Init(s)
 	for i := 0; i < 50; i++ {
 		cost := uint64(i) * uint64(rand.Int63n(10))

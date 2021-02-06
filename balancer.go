@@ -24,16 +24,16 @@ type IHashBalancer interface {
 	Balance(interface{}) interface{}
 }
 
-// RoundRobin
-type RoundRobin struct {
-	// Use a 32 bits integer so RoundRobin values don't need to be aligned to
+// RoundRobinBalancer
+type RoundRobinBalancer struct {
+	// Use a 32 bits integer so RoundRobinBalancer values don't need to be aligned to
 	// apply atomic increments.
 	offset     uint32
 	partitions []interface{} //TODO Waiting for golang Generic features, rewrite
 }
 
 // Balance satisfies the Balancer interface.
-func (rr *RoundRobin) Balance() interface{} {
+func (rr *RoundRobinBalancer) Balance() interface{} {
 	length := uint32(len(rr.partitions))
 	offset := atomic.AddUint32(&rr.offset, 1) - 1
 	return rr.partitions[offset%length]
@@ -103,7 +103,7 @@ func (b *randomBalancer) Balance() interface{} {
 
 // LeastValueBalance  is a Balancer implementation that routes to the partition with least resources
 // etc. Number of connections, size of memory and space occupied
-type LeastResourcesBalance struct {
+type LeastResourcesBalancer struct {
 	counters []leastResourcesCounter
 }
 
@@ -112,7 +112,7 @@ type leastResourcesCounter struct {
 	cost      uint64
 }
 
-func (lb *LeastResourcesBalance) Init(partitions []interface{}) {
+func (lb *LeastResourcesBalancer) Init(partitions []interface{}) {
 	lb.counters = make([]leastResourcesCounter, len(partitions))
 
 	for i, p := range partitions {
@@ -121,7 +121,7 @@ func (lb *LeastResourcesBalance) Init(partitions []interface{}) {
 	}
 }
 
-func (lr *LeastResourcesBalance) Balance(curCost interface{}) interface{} {
+func (lr *LeastResourcesBalancer) Balance(curCost interface{}) interface{} {
 
 	minCost := lr.counters[0].cost
 	minIndex := 0

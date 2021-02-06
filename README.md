@@ -2,9 +2,9 @@
 
 Load balancing interface implementation library, which implements some common load balancing algorithms
 
-* RoundRobin
+* RoundRobinBalancer
 * WeightBalancer
-* LeastResourcesBalance
+* LeastResourcesBalancer
 * HashBalancer
 * ....
 
@@ -15,7 +15,7 @@ s := make([]interface{}, len(ipList))
 for i, v := range ipList {
     s[i] = v
 }
-rb := &RoundRobin{offset: 0, partitions: []interface{}(s)}
+rb := &RoundRobinBalancer{offset: 0, partitions: []interface{}(s)}
 for i := 0; i < 50; i++ {
     y := rb.Balance()  // gen 
 }
